@@ -7,7 +7,7 @@ import (
 
 	"url-shortener/internal/service"
 
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
@@ -46,8 +46,7 @@ func (h *HTTPHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	var req shortenRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(shortenResponse{Error: "invalid request"})
+		respondJSON(w, http.StatusBadRequest, shortenResponse{Error: "invalid request"})
 		return
 	}
 
@@ -66,7 +65,6 @@ func (h *HTTPHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	fullShortURL := "http://localhost:8080/" + urlEntity.ShortUrl
 
 	respondJSON(w, http.StatusCreated, shortenResponse{ShortUrl: fullShortURL})
-	return
 }
 
 func (h *HTTPHandler) ResolveURL(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +80,14 @@ func (h *HTTPHandler) ResolveURL(w http.ResponseWriter, r *http.Request) {
 }
 
 func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
+	body, err := json.Marshal(payload)
+	
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(payload)
+	_, _ = w.Write(body)
 }

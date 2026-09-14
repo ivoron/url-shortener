@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"strings"
 
-	"url-shortener/internal/repository"
 	"url-shortener/internal/model"
+	"url-shortener/internal/repository"
 )
 
 const (

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
+	"url-shortener/internal/handler"
 	"url-shortener/internal/model"
 	"url-shortener/internal/repository"
 	"url-shortener/internal/service"
-	"url-shortener/internal/handler"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

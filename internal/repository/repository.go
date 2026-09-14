@@ -5,6 +5,7 @@ import (
 	"errors"
 	"url-shortener/internal/model"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,10 @@ func NewURLRepository(db *gorm.DB) URLRepository {
 }
 
 func (r *urlRepository) Save(ctx context.Context, url *model.URL) error {
+	if url.ID == "" {
+		url.ID = uuid.NewString()
+	}
+
 	return r.db.WithContext(ctx).Create(url).Error
 }
 
