@@ -5,7 +5,6 @@ import (
 	"errors"
 	"math/rand"
 	"strings"
-	"time"
 
 	"url-shortener/internal/repository"
 	"url-shortener/internal/model"
@@ -13,7 +12,7 @@ import (
 
 const (
 	symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	shortURLLength = 8
+	shortURLLength = 6
 )
 
 type ShortenerService interface {
@@ -73,8 +72,9 @@ func (s *shortenerService) Resolve(ctx context.Context, shortURL string) (*model
 }
 
 func generateShortURL() string {
-	rand.Seed(time.Now().UnixNano())
 	var sb strings.Builder
+
+	sb.Grow(shortURLLength)
 
 	for i := 0; i < shortURLLength; i++ {
 		sb.WriteByte(symbols[rand.Intn(len(symbols))])
