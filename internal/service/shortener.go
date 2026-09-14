@@ -31,16 +31,16 @@ func NewShortenerService(repo repository.URLRepository) ShortenerService {
 	}
 }
 
-func (s *shortenerService) Shorten(ctx context.Context, originalURL string) (*model.URL, error) {
-	if originalURL == "" {
+func (s *shortenerService) Shorten(ctx context.Context, originalUrl string) (*model.URL, error) {
+	if originalUrl == "" {
 		return nil, errors.New("URL is empty")
 	}
 
-	shortURL := generateShortURL()
+	shortUrl := generateShortURL()
 
 	url := &model.URL{
-		OriginalURL: originalURL,
-		ShortURL:    shortURL,
+		OriginalUrl: originalUrl,
+		ShortUrl:    shortUrl,
 	}
 
 	err := s.repo.Save(ctx, url)
@@ -53,7 +53,7 @@ func (s *shortenerService) Shorten(ctx context.Context, originalURL string) (*mo
 }
 
 func (s *shortenerService) Resolve(ctx context.Context, shortURL string) (*model.URL, error) {
-	url, err := s.repo.GetByShortURL(ctx, shortURL)
+	url, err := s.repo.FindByShortURL(ctx, shortURL)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (s *shortenerService) Resolve(ctx context.Context, shortURL string) (*model
 	go func() {
 		bgCtx := context.Background()
 		
-		_ = s.repo.IncrementVisits(bgCtx, url.ShortURL)
+		_ = s.repo.IncrementVisits(bgCtx, url.ShortUrl)
 	}()
 
 	return url, nil
